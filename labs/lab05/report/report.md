@@ -144,6 +144,46 @@ Midnight Commander (или просто mc) — это программа, ко�
 
 ![Проверка работы файла](image/fig12.png){#fig:012 width=70%}
 
+Листинг написанной программы:
+
+```
+SECTION .data
+msg: DB 'Введите строку', 10
+
+msgLen: EQU $-msg
+
+SECTION .bss
+buf1:    RESB 80
+
+
+SECTION .text
+GLOBAL _start
+ _start:
+ 
+ mov  eax,4
+ mov  ebx,1
+ mov  ecx,msg
+ mov  edx,msgLen
+ int  80h
+ 
+ mov  eax, 3
+ mov  ebx, 0
+ mov  ecx, buf1
+ mov  edx, 80
+ int  80h
+ 
+ mov  eax,4
+ mov  ebx,1
+ mov  ecx,buf1
+ mov  edx,buf1
+ int  80h
+ 
+ mov  eax,1
+ mov  ebx,0
+ int  80h
+```
+ 
+ 
 Создала копию файла lab5-2.asm. Исправила текст программы с использование подпрограмм из внешнего файла in_out.asm, так чтобы она работала по следующему
 алгоритму:
 • вывести приглашение типа “Введите строку:”;
@@ -155,6 +195,39 @@ Midnight Commander (или просто mc) — это программа, ко�
 Создала исполняемый файл и проверила его работу (рис. @fig:014).
 
 ![Запуск программы](image/fig14.png){#fig:014 width=70%}
+
+Листинг написанной программы:
+
+
+```
+%include 'in_out.asm'
+
+SECTION .data
+msg: DB 'Введите строку', 10
+
+msgLen: EQU $-msg
+
+SECTION .bss
+buf1:    RESB 80
+
+
+SECTION .text
+GLOBAL _start
+ _start:
+ 
+ mov  eax,msg
+ call sprint
+ 
+ mov  ecx,buf1
+ mov  edx,80
+ 
+ call sread
+ mov  eax, 4
+ mov  ebx, 1
+ mov  ecx, buf1
+ int  80h
+ call quit
+```
 
 # Выводы
 
